@@ -130,6 +130,37 @@ class PagesController extends Controller
             return Response()->json(["Message"=>"Product not found"]);
         }
     }
+
+    public function product_category($id)
+    {
+        $product=DB::select('SELECT f.id,c.name, f.item_name,f.restu_id,  f.description, f.price, f.image_small,f.image2_small,u.res_name FROM food_items f, cats c,  users u WHERE f.restu_id=u.id and f.status="1" and f.cat_id=c.id and f.cat_id='.$id.' GROUP by f.id');
+        if(!is_null($product)) {
+            return Response()->json($product);
+        }
+        else{
+            return Response()->json(["Message"=>"Product not found"]);
+        }
+    }
+    public function product_name(Request $rg)
+    {
+        $product=DB::select("SELECT f.id,c.name, f.item_name,f.restu_id,  f.description, f.price, f.image_small,f.image2_small,u.res_name FROM food_items f, cats c,  users u WHERE f.restu_id=u.id and f.status='1' and f.cat_id=c.id and f.item_name LIKE '.%$rg->name.' GROUP by f.id");
+        if(!is_null($product)) {
+            return Response()->json($product);
+        }
+        else{
+            return Response()->json(["Message"=>"Product not found"]);
+        }
+    }
+    public function OrdersList($id)
+    {
+        $product=DB::select("SELECT c.id, c.quantity, c.price, u.res_name ,c.orderid,f.item_name,o.name,o.shipping_address,o.phone_no,o.email,o.amount,o.quantity,o.is_completed FROM carts c, orders o, food_items f,users u where c.user_id=o.user_id and c.productid=f.id and o.user_id=".$id." GROUP by c.id ");
+        if(!is_null($product)) {
+            return Response()->json(["datas"=>$product]);
+        }
+        else{
+            return Response()->json(["Message"=>"Product not found"]);
+        }
+    }
   
    
 }

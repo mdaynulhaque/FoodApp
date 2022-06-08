@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use Auth;
+use DB;
 class CartsController extends Controller
 {
     /**
@@ -23,7 +24,27 @@ class CartsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    
+    public function sCart(Request $request){
+       $cart=DB::table('carts')->where('productid',$request->productid)
+                    ->where('user_id',$request->user_id)
+                    ->where('restuid',$request->restuid)
+                    ->first();
+                
+        if($cart != null){
+            DB::table('carts')->where('productid',$request->productid)
+                    ->where('user_id',$request->user_id)
+                    ->where('restuid',$request->restuid)->update(['quantity' => $request->quantity,'price'=>$request->price]);
+        }else{
+          $cart=new Cart();
+           $cart->productid=$request->productid;
+           $cart->quantity=$request->quantity;
+           $cart->price=$request->price;
+           $cart->user_id=$request->user_id;
+           $cart->restuid=$request->restuid;
+           $cart->save();
+        }
+       
+    }
 
     
     public function store(Request $request)
